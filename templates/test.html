@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Simulador de Memoria</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="https://cdn.pixabay.com/photo/2013/07/12/17/56/ram-152655_960_720.png" width="70" height="40" class="d-inline-block align-top" alt="">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="#">Simulador de Memoria <span class="sr-only">(current)</span></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <br>
+  <br>
+    <!--Aquí va el formulario de los parametros de las memorias-->
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <form>
+            <h5 class="card-title">Parametros de las memorias</h5>
+            <div class="form-row align-items-center">
+              <div class="col-12 col-md-6 my-1">
+                <label class="mr-sm-2" for="listaMemoriaPrincipal">Seleccione el tamaño de la memoria Principal</label>
+                <select class="custom-select mr-sm-2" id="listaMemoriaPrincipal">
+                  <option selected>Tamaño...</option>
+                  <option value="64">64 bits</option>
+                  <option value="128">128 bits</option>
+                  <option value="256">256 bits</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 my-1">
+                <label class="mr-sm-2" for="listaMemoriaCache">Seleccione el tamaño de la memoria Cache</label>
+                <select class="custom-select mr-sm-2" id="listaMemoriaCache">
+                  <option selected>Tamaño...</option>
+                  <option value="8">8 bits</option>
+                  <option value="16">16 bits</option>
+                  <option value="32">32 bits</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 my-1">
+                <a class="btn btn-outline-dark" onclick="ShowMemoria()">Enviar</a>
+              </div>
+              <div class="col-12 col-md-6 my-1">  
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!--Aquí se imprimen las tablas-->
+    <div class="container-fluid py-5">
+      <div class="card">
+        <div class="card-body">
+          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Direcciones Memoria Principal</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Direcciones Memoria Cache</a>
+            </li>
+            <span></span>
+            <li class="nav-item col">
+              <button type="submit" class="float-right btn btn-outline-danger" id="btn-eliminar" onclick="limpiar()">Eliminar</button>
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+              <div class="table-responsive" id="tablaP">
+                {{table|safe}}
+              </div>
+            </div>
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+              <div class="table-responsive" id="tablaC">
+                {{tableCache|safe}}  
+              </div>
+            </div>
+            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Aqui Esta el formulario para busqueda de direcciones aleatorias en la memoria Cache-->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12 col-md-4">
+          <div class="card">
+            <div class="card-body bg-dark text-white">
+              <h5 class="card-title">¿Quiere buscar direcciones aleatorias en la memoria cache?</h5>
+              <div class="form">
+                <div class="form-group row">
+                  <label for="inputCantidad" class="col-sm-6 col-form-label">Ingrese la cantidad: </label>
+                  <input type="number" class="col-sm-5 form-control" id="inputCantidad" min="1" max="20">
+                  <div class="col-sm-1"></div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6"></div>
+                  <button type="submit" class="col-sm-5 btn btn-light" onclick="busquedas()">Enviar</button>
+                  <div class="col-sm-1"></div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="card-body bg-dark text-white">
+              <h5 class="card-title">¿Quiere reemplazar una direccion en la memoria Cache?</h5>
+              <div class="form">
+                <div class="form-group row">
+                  <div class="col-1"></div>
+                  <div id="SelectNoEncontado">
+                    <select class="custom-select" id="listN">
+                      <option selected>Seleccione una Dirección: </option>
+                    </select>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6"></div>
+                  <button type="submit" class="col-sm-5 btn btn-light" onclick="reemplazo()">Enviar</button>
+                  <div class="col-sm-1"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Resultados</h5>
+              <div class="row">
+                <div class="col-12 col-md-6">
+                  <div id="htmlAciertos"></div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div id="htmlPerdidas"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center">Reemplazo en Memoria Cache</h5>
+          <div class="table-responsive" id="reemplazoTablaCache">
+            <h5 class="text-center ">Aun no se ha reemplazado ninguna dirección.</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center">Escritura en Memoria</h5>
+          <div class="form-row align-items-center">
+            <div class="col-12 col-md-6 my-1">
+              <label class="mr-sm-2" for="listDereccionesP">Seleccione la dirección a reemplazar</label>
+              <select class="custom-select mr-sm-2" id="listDereccionesP">
+                <option selected>Seleccione una dirección...</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-6 my-1">
+              <label class="mr-sm-2" for="insertPalabra">Ingrese la palabra a reemplazar</label>
+              <input type="text" class="form-control" id="insertPalabra" placeholder="Ingrese la palabra..." min="0" max="4">
+            </div>
+            <div class="col-12 col-md-6 my-1">
+              <a class="btn btn-outline-dark" onclick="insertar()">Enviar</a>
+            </div>
+            <div class="col-12 col-md-6 my-1">  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center">Memoria Principal con valor insertado</h5>
+          <div class="table-responsive" id="insertTablaPrincipal">
+            <h5 class="text-center ">Aun no se ha reemplazado ninguna dirección.</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <textarea class="form-control" id="cache" rows="3" hidden></textarea>
+    <textarea class="form-control" id="principal" rows="3" hidden></textarea>
+    <br>
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center">Memoria cache con valor insertado</h5>
+          <div class="table-responsive" id="insertTablaCache">
+            <h5 class="text-center ">Aun no se ha reemplazado ninguna dirección.</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+    <textarea class="form-control" id="cache" rows="3" hidden></textarea>
+    <textarea class="form-control" id="principal" rows="3" hidden></textarea>
+
+    <script>
+      function ShowMemoria(){
+
+      //var csrftoken = getCookie('csrftoken');
+      /* Para obtener el texto */
+      var comboPeriodo1 = document.getElementById("listaMemoriaPrincipal");
+      var comboPeriodo2 = document.getElementById("listaMemoriaCache");
+      //var comboCuenta = document.getElementById("listaCuentas");
+      var selectedPeriodo1 = comboPeriodo1.options[comboPeriodo1.selectedIndex].value;
+      var selectedPeriodo2 = comboPeriodo2.options[comboPeriodo2.selectedIndex].value;
+      //var selectedCuenta = comboCuenta.options[comboCuenta.selectedIndex].text;
+
+      //console.log(selectedPeriodo1)
+      //console.log(selectedPeriodo2)
+      if (selectedPeriodo1 == "Tamaño..." || selectedPeriodo1 == "Tamaño..."){
+        selectedPeriodo1= ""
+        selectedPeriodo2=""
+      }
+
+      $.ajax({
+                url:"{% url 'update' %}",
+                type:"GET",
+                data:{
+                  'selectedP': selectedPeriodo1,
+                  'selectedC': selectedPeriodo2,
+                },
+                dataType:"json",
+                success: function(test){
+                  document.getElementById("tablaP").innerHTML="";
+                  document.getElementById("tablaP").innerHTML=test.table;
+                  document.getElementById("tablaC").innerHTML="";
+                  document.getElementById("tablaC").innerHTML=test.tableCache;
+                  document.getElementById("cache").innerHTML=test.cache;
+                  document.getElementById("principal").innerHTML=test.principal;
+                  document.getElementById("listDereccionesP").innerHTML=test.listDirecciones;
+                  }
+              });
+    }
+
+      function limpiar(){
+        document.getElementById("tablaP").innerHTML="";
+        document.getElementById("tablaC").innerHTML="";
+      }
+
+      function busquedas(){
+        var cantidad = document.getElementById("inputCantidad");
+        //Para las memorias
+        var comboP = document.getElementById("listaMemoriaPrincipal");
+        var comboC = document.getElementById("listaMemoriaCache");
+        var cache= document.getElementById("cache");
+        //Datos para enviar
+        var selectedP = comboP.options[comboP.selectedIndex].value;
+        var selectedC = comboC.options[comboC.selectedIndex].value;
+        var selectCantidad = cantidad.value
+        var memoriaCache=cache.value
+        //console.log(selectCantidad)
+        //console.log(selectedP)
+        //console.log(selectedC)
+        //console.log(memoriaCache)
+        if (selectedP!='Tamaño...' && selectedC!='Tamaño...'){
+          $.ajax({
+                url:"{% url 'randomB' %}",
+                type:"GET",
+                data:{
+                  'cantidad': selectCantidad,
+                  'sizeP':selectedP,
+                  'sizeC':selectedC,
+                  'cache':memoriaCache
+                },
+                dataType:"json",
+                success: function(test){
+                  document.getElementById("htmlAciertos").innerHTML=test.thmlEncontrados;
+                  document.getElementById("htmlPerdidas").innerHTML=test.thmlNoEncontrados;
+                  document.getElementById("listN").innerHTML=test.listNoEncontrado;         
+                  }
+              });
+        }
+      }
+      function reemplazo(){
+        var comboC = document.getElementById("listN");
+        var cache= document.getElementById("cache");
+        var selectedC = comboC.options[comboC.selectedIndex].value;
+        var memoriaCache=cache.value
+        console.log(selectedC)
+        if (selectedC != "Seleccione una Dirección: "){
+          $.ajax({
+                url:"{% url 'reemplazoCache' %}",
+                type:"GET",
+                data:{
+                  'direccion': selectedC,
+                  'cache':memoriaCache
+                },
+                dataType:"json",
+                success: function(test){
+                  document.getElementById("reemplazoTablaCache").innerHTML=test.nuevaCache;
+                  }
+              }); 
+        }
+      }
+      function insertar(){
+        //Elementos
+        var direccion = document.getElementById("listDereccionesP");
+        var inputPalabra = document.getElementById("insertPalabra");
+        var cache= document.getElementById("cache");
+        var principal= document.getElementById("principal");
+        //Valores
+        var selectedP = direccion.options[direccion.selectedIndex].value;
+        var palabra = inputPalabra.value
+        var memoriaCache=cache.value
+        var memoriaPrincipal=principal.value
+        if (selectedP != "Seleccione una dirección..."){
+          $.ajax({
+                url:"{% url 'insertPalabra' %}",
+                type:"GET",
+                data:{
+                  'direccion': selectedP,
+                  'palabra':palabra,
+                  'cache':memoriaCache,
+                  'principal':memoriaPrincipal,
+                },
+                dataType:"json",
+                success: function(test){
+                  document.getElementById("insertTablaCache").innerHTML=test.nuevaCache;
+                  document.getElementById("insertTablaPrincipal").innerHTML=test.nuevaPrincipal;
+                  }
+              }); 
+        }
+
+      }
+    </script>    
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</body>
+</html>
