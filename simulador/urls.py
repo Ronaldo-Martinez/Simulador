@@ -19,8 +19,7 @@ from simulacion_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('inicio/', views.inicio,name='inicio'),
-    path('', views.imprimirMemoria,name='misdatos'),
+    path('', views.inicio,name='inicio'),
     path('nuevasMomiras', views.nuevasMemorias,name='update'),
     path('busquedaAleatoria', views.randomBusqueda ,name='randomB'),
     path('reemplazoCache', views.reemplazoCache ,name='reemplazoCache'),
